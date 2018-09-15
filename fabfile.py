@@ -46,11 +46,11 @@ def _setup_user():
     for user in USERS:
         keys = '\n'.join(_get_public_key_from_github(user))
 
-        sudo('useradd -m %s -s /bin/bash' % user)
-        sudo('gpasswd -a %s wheel' % user)
+        cuisine.user_ensure(user, shell='/bin/bash')
+        cuisine.group_user_ensure('wheel', user)
         sudo('echo "password" | passwd --stdin %s' % user)
 
-        sudo('mkdir /home/%s/.ssh' % user)
+        sudo('mkdir -p /home/%s/.ssh' % user)
         sudo('chown %s:%s /home/%s/.ssh' % (user, user, user))
         sudo('chmod 700 /home/%s/.ssh' % user)
 
