@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from fabric.api import *
 import cuisine
 import urllib
@@ -17,6 +18,9 @@ def init():
 @task
 def install_nginx_and_php():
     sudo('yum install --enablerepo=epel,remi,remi-php72 nginx php php-mbstring php-pdo php-mysqlnd php-fpm php-gd -y')
+    # mysql は最初からenabled
+    sudo('systemctl enable nginx')
+    sudo('systemctl enable php-fpm')
 
 
 @task
