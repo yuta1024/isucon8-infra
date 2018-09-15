@@ -64,6 +64,7 @@ def _setup_user():
 
 
 def _setup_kataribe():
+    cuisine.package_ensure('wget')
     cuisine.package_ensure('unzip')
 
     temp_dir = run('mktemp -d')
