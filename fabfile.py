@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from fabric.api import *
 import cuisine
 import urllib
@@ -17,6 +18,9 @@ def init():
 @task
 def install_nginx_and_php():
     sudo('yum install --enablerepo=epel,remi,remi-php72 nginx php php-mbstring php-pdo php-mysqlnd php-fpm php-gd -y')
+    # mysql は最初からenabled
+    sudo('systemctl enable nginx')
+    sudo('systemctl enable php-fpm')
 
 
 @task
@@ -46,11 +50,11 @@ def _setup_user():
     for user in USERS:
         keys = '\n'.join(_get_public_key_from_github(user))
 
-        sudo('useradd -m %s -s /bin/bash' % user)
-        sudo('gpasswd -a %s wheel' % user)
+        cuisine.user_ensure(user, shell='/bin/bash')
+        cuisine.group_user_ensure('wheel', user)
         sudo('echo "password" | passwd --stdin %s' % user)
 
-        sudo('mkdir /home/%s/.ssh' % user)
+        sudo('mkdir -p /home/%s/.ssh' % user)
         sudo('chown %s:%s /home/%s/.ssh' % (user, user, user))
         sudo('chmod 700 /home/%s/.ssh' % user)
 
@@ -60,6 +64,7 @@ def _setup_user():
 
 
 def _setup_kataribe():
+    cuisine.package_ensure('wget')
     cuisine.package_ensure('unzip')
 
     temp_dir = run('mktemp -d')
