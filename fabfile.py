@@ -25,7 +25,9 @@ def install_nginx_and_php():
 
 @task
 def install_mysql():
+    sudo('yum remove mariadb-server mariadb mariadb-devel -y')
     sudo('yum install Percona-Server-server-57 percona-toolkit -y')
+    # mysqlのenableとstart
 
 
 @task
